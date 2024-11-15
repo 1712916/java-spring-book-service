@@ -1,6 +1,7 @@
 package com.vinhnt.book_service.controller;
 
 import com.vinhnt.book_service.dto.ApiResponse;
+import com.vinhnt.book_service.dto.BookRequest;
 import com.vinhnt.book_service.model.Book;
 import com.vinhnt.book_service.service.BookService;
 import jakarta.validation.Valid;
@@ -35,10 +36,9 @@ public class BookController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<Book>> createBook(@Valid @RequestBody Book book) {
-        Book createdBook = bookService.saveBook(book);
-        ApiResponse<Book> response = ApiResponse.success("Book created successfully", createdBook);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    public ResponseEntity<ApiResponse<Book>> createBook(@RequestBody BookRequest bookRequest) {
+        Book createdBook = bookService.createBook(bookRequest);
+        return ResponseEntity.ok(ApiResponse.success("Book created successfully", createdBook));
     }
 
     @PutMapping("/{id}")

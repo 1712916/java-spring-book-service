@@ -1,6 +1,9 @@
 package com.vinhnt.book_service.service;
 
+import com.vinhnt.book_service.dto.AuthorResponse;
 import com.vinhnt.book_service.dto.BookRequest;
+import com.vinhnt.book_service.dto.BookResponse;
+import com.vinhnt.book_service.dto.CategoryResponse;
 import com.vinhnt.book_service.exception.BookNotFoundException;
 import com.vinhnt.book_service.model.Book;
 import com.vinhnt.book_service.model.Category;
@@ -12,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 
@@ -19,19 +23,38 @@ public class BookService {
     private final BookRepository bookRepository;
     private final CategoryRepository categoryRepository;
 
-    @Autowired
-    public BookService(BookRepository bookRepository, CategoryRepository categoryRepository) {
+    @Autowired public BookService(BookRepository bookRepository, CategoryRepository categoryRepository) {
         this.bookRepository = bookRepository;
         this.categoryRepository = categoryRepository;
     }
 
-    public List<Book> getAllBooks() {
-        return bookRepository.findAll();
+
+    public List<BookResponse> getAllBooks() {
+        return bookRepository.findAll().stream().map(this::mapToBookResponse).collect(Collectors.toList());
+    }
+
+    private BookResponse mapToBookResponse(Book book) {
+        // Ánh xạ categories
+        List<CategoryResponse> categories = book
+                .getCategories()
+                .stream()
+                .map(category -> new CategoryResponse(category.getId(), category.getName(), category.getDescription()))
+                .collect(Collectors.toList());
+
+        // Ánh xạ authors
+        List<AuthorResponse> authors = book
+                .getAuthors()
+                .stream()
+                .map(author -> new AuthorResponse(author.getId(), author.getName(), author.getBio(), author.getDescription()))
+                .collect(Collectors.toList());
+
+        return new BookResponse(book.getId(), book.getTitle(), book.getPublishedDate(), book.getIsbn(), book.getPrice(), book.getDescription(), book.getImages(), categories, authors);
     }
 
     public Book getBookById(Long id) {
-        return bookRepository.findById(id)
-                             .orElseThrow(() -> new BookNotFoundException("Book not found with ID: " + id));
+        return bookRepository
+                .findById(id)
+                .orElseThrow(() -> new BookNotFoundException("Book not found with ID: " + id));
     }
 
     public Book createBook(BookRequest bookRequest) {

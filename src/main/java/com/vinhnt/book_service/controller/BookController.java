@@ -2,6 +2,7 @@ package com.vinhnt.book_service.controller;
 
 import com.vinhnt.book_service.dto.ApiResponse;
 import com.vinhnt.book_service.dto.BookRequest;
+import com.vinhnt.book_service.dto.BookResponse;
 import com.vinhnt.book_service.model.Book;
 import com.vinhnt.book_service.service.BookService;
 import jakarta.validation.Valid;
@@ -22,10 +23,9 @@ public class BookController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Book>>> getAllBooks() {
-        List<Book> books = bookService.getAllBooks();
-        ApiResponse<List<Book>> response = ApiResponse.success("Retrieved all books successfully", books);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<ApiResponse<List<BookResponse>>> getAllBooks() {
+        List<BookResponse> books = bookService.getAllBooks();
+        return ResponseEntity.ok(ApiResponse.success("Books fetched successfully", books));
     }
 
     @GetMapping("/{id}")

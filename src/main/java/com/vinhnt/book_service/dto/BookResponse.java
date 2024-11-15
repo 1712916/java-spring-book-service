@@ -1,76 +1,36 @@
-package com.vinhnt.book_service.model;
+package com.vinhnt.book_service.dto;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-@Entity
-@Table(name = "books")
-public class Book {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class BookResponse {
     private Long id;
-
-    @NotBlank(message = "Title is required")
     private String title;
-
-    @NotBlank(message = "Author is required")
-    private String author;
-
     private LocalDate publishedDate;
-
-    @NotBlank(message = "ISBN is required")
-    @Column(unique = true)
     private String isbn;
-
-    @DecimalMin(value = "0.0", inclusive = false, message = "Price must be positive")
     private BigDecimal price;
-
-    @Lob
     private String description;
-
-    @ElementCollection
     private List<String> images;
+    private List<CategoryResponse> categories; // Danh sách thể loại
+    private List<AuthorResponse> authors;     // Danh sách tác giả
 
-    @ManyToMany
-    @JoinTable(
-            name = "book_category",
-            joinColumns = @JoinColumn(name = "book_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id")
-    )
-    private Set<Category> categories = new HashSet<>();
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "book_author",
-            joinColumns = @JoinColumn(name = "book_id"),
-            inverseJoinColumns = @JoinColumn(name = "author_id")
-    )
-    private Set<Author> authors = new HashSet<>();
-
-    // Constructors, getters, and setters
-
-    public Book() {
-    }
-
-    public Book(String title, String author, LocalDate publishedDate, String isbn, BigDecimal price, String description, List<String> images, Set<Category> categories) {
+    // Constructor
+    public BookResponse(Long id, String title, LocalDate publishedDate, String isbn, BigDecimal price,
+                        String description, List<String> images, List<CategoryResponse> categories,
+                        List<AuthorResponse> authors) {
+        this.id = id;
         this.title = title;
-        this.author = author;
         this.publishedDate = publishedDate;
         this.isbn = isbn;
         this.price = price;
         this.description = description;
         this.images = images;
         this.categories = categories;
+        this.authors = authors;
     }
 
     // Getters and Setters
-
     public Long getId() {
         return id;
     }
@@ -85,14 +45,6 @@ public class Book {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
     }
 
     public LocalDate getPublishedDate() {
@@ -135,19 +87,19 @@ public class Book {
         this.images = images;
     }
 
-    public Set<Category> getCategories() {
+    public List<CategoryResponse> getCategories() {
         return categories;
     }
 
-    public void setCategories(Set<Category> categories) {
+    public void setCategories(List<CategoryResponse> categories) {
         this.categories = categories;
     }
 
-    public Set<Author> getAuthors() {
+    public List<AuthorResponse> getAuthors() {
         return authors;
     }
 
-    public void setAuthors(Set<Author> authors) {
+    public void setAuthors(List<AuthorResponse> authors) {
         this.authors = authors;
     }
 }

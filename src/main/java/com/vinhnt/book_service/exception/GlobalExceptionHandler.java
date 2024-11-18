@@ -39,4 +39,20 @@ public class GlobalExceptionHandler {
         ApiResponse<Object> response = ApiResponse.failure(errorMessage, "DATA_INTEGRITY_VIOLATION");
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
+    // Xử lý IllegalArgumentException
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse<Void>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.failure(ex.getMessage(), "INVALID_ARGUMENT"));
+    }
+
+    // Xử lý tất cả các ngoại lệ khác
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<Void>> handleGenericException(Exception ex) {
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(ApiResponse.failure("An unexpected error occurred", "INTERNAL_SERVER_ERROR"));
+    }
 }
